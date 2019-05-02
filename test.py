@@ -42,12 +42,21 @@ elif options.category:
         print('Unable to find category "{}"'.format(options.category))
         sys.exit(1)
     for d in category['data']:
-        print('"{}": "{}" ({})'.format(d['id'] if d['live'] else d['mongoId'], d['title'], d['live']))
-        print(d)
+        print('"{}": "{}" ({})'.format(d['id'], d['title'], d['live']))
 
     sys.exit(0)
 elif options.stream:
-    stream = onesoccer.getManifest(options.stream, options.live)
+    datum = None
+    layout = onesoccer.getLayout()
+    for group in layout:
+        for data in group['data']:
+            if data['id'] == options.stream:
+                datum = data
+
+    encoded = urllib.parse.urlencode(onesoccer.simplifyDatum(datum))
+    decoded = urllib.parse.parse_qs(encoded)
+    decoded = dict((name, value[0]) for name, value in decoded.items())
+    stream = onesoccer.getManifest(decoded)
     print('Stream is "{}"'.format(stream))
     sys.exit(0)
 else:

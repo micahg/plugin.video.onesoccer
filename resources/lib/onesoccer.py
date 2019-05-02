@@ -48,7 +48,25 @@ class OneSoccer:
         return js
 
 
-    def getManifest(self, item_id, live):
+    def simplifyDatum(self, datum):
+        """
+        Simplify a stream description down to something more kodi friendly
+        """
+        values = {
+            'title': datum['title'],
+            'plot': datum['header'],
+            'date': datum['date'],
+            'id': datum['id'],
+            'selectedStream': datum['selectedStream'],
+            'image': datum['images']['landscape'],
+            'live': datum['live']
+        }
+        if 'mongoId' in datum:
+            values['mongoId'] = datum['mongoId']
+        return values
+
+
+    def getManifest(self, values):
         auth = loadAuthorization()
         if not auth:
             raise OneSoccerAuthError('ERROR: no authorization data')
@@ -57,7 +75,8 @@ class OneSoccer:
         elif not 'token' in auth:
             raise OneSoccerAuthError('ERROR: token not in authorization data')
 
-        url = self.LIVE_STREAM_FMT if live else self.STREAM_FMT
+        item_id = values['mongoId'] if 'mongoId' in values else values['id']
+        url = self.LIVE_STREAM_FMT if values['live'].lower() == 'true' else self.STREAM_FMT
         url = url.format(item_id, auth['uuid'])
         headers = { 'x-sessionId': auth['token'] }
 

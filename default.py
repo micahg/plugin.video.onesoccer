@@ -36,38 +36,30 @@ def createMainMenu(onesoccer):
     xbmcplugin.endOfDirectory(addon_handle)
     return None
 
+
 def createSubMenu(onesoccer, menu):
-    xbmc.log('MICAH menu is {}'.format(menu), xbmc.LOGWARNING)
     for m in menu:
-        xbmc.log('MICAH menu item is {}'.format(m), xbmc.LOGWARNING)
-        labels = {'title': m['title'], 'mediatype': 'video'}
+        values = onesoccer.simplifyDatum(m)
+        labels = {'title': values['title'], 'mediatype': 'video'}
+        if 'plot' in values:
+            labels['plot'] = values['plot']
+            labels['plotoutline'] = values['plot']
+
         item = xbmcgui.ListItem(labels['title'])
         item.setInfo('Video', labels)
         item.setProperty('IsPlayable', 'true')
+        if 'image' in values:
+            item.setArt({ 'thumb': values['image'], 'poster': values['image'] })
 
-        if m['live']:
-            log('MICAH createSubMenu LIVE {}'.format(m['live']), True)
-        else:
-            log('MICAH createSubMenu NOT LIVE {}'.format(m['live']), True)
-
-        # non-live video uses mongoId
-        values = {'title': m['title'], 'video': m['id'] if m['live'] else m['mongoId'], 'live': m['live']}
         path = sys.argv[0] + "?" + urllib.urlencode(values)
         xbmcplugin.addDirectoryItem(addon_handle, path, item, False)
     xbmcplugin.endOfDirectory(addon_handle)
     return None
 
 def playVideo(onesoccer, data, reauth=False):
-    xbmc.log('MICAH video data is {}'.format(data), xbmc.LOGWARNING)
-    video = data['video'][0]
-    title = data['title'][0]
-    live = data['live'][0]
-    if live:
-        log('MICAH LIVE {}'.format(live), True)
-    else:
-        log('MICAH NOT LIVE {}'.format(live), False)
+
     try:
-        url = onesoccer.getManifest(video, live.lower() == 'true')
+        url = onesoccer.getManifest(data)
     except OneSoccerAuthError as e:
         xbmc.log(e.message, xbmc.LOGWARNING)
 
@@ -82,16 +74,10 @@ def playVideo(onesoccer, data, reauth=False):
             xbmcgui.Dialog().ok(getString(30004), getString(30005))
             return
         return playVideo(onesoccer, data, True)
-    xbmc.log('MICAH manifest is {}'.format(url), xbmc.LOGWARNING)
 
-    labels = {'title': title, 'mediatype': 'video'}
-    item = xbmcgui.ListItem(title, path=url)
-    #item.setArt({ 'thumb': image, 'poster': image })
+    labels = {'title': data['title'], 'mediatype': 'video'}
+    item = xbmcgui.ListItem(data['title'], path=url)
     item.setInfo(type="Video", infoLabels=labels)
-    # helper = inputstreamhelper.Helper('hls')
-    # if not xbmcaddon.Addon().getSettingBool("ffmpeg") and helper.check_inputstream():
-    #     item.setProperty('inputstreamaddon','inputstream.adaptive')
-    #     item.setProperty('inputstream.adaptive.manifest_type', 'hls')
     xbmcplugin.setResolvedUrl(addon_handle, True, item)
 
     return None
@@ -101,10 +87,12 @@ onesoccer = OneSoccer()
 if len(sys.argv[2]) == 0:
     createMainMenu(onesoccer)
 else:
+    # get the dict, and then make the items not lists
     data = urlparse.parse_qs(sys.argv[2][1:])
-    xbmc.log('MICAH data is {}'.format(data), xbmc.LOGWARNING)
+    data = dict((name, value[0]) for name, value in data.items())
     if 'menu' in data:
-        json_data = json.loads(data['menu'][0])
+        json_data = json.loads(data['menu'])
         createSubMenu(onesoccer, json_data)
-    elif 'video' in data:
+    else:
+        #if 'video' in data:
         playVideo(onesoccer, data)
