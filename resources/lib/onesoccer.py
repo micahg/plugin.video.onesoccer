@@ -57,13 +57,30 @@ class OneSoccer:
             'plot': datum['header'],
             'date': datum['date'],
             'id': datum['id'],
-            'selectedStream': datum['selectedStream'],
             'image': datum['images']['landscape'],
             'live': datum['live']
         }
-        if 'mongoId' in datum:
+
+        if 'selectedStream' in datum and datum['selectedStream'] != None:
+            values['selectedStream'] = datum['selectedStream']
+
+        if 'mongoId' in datum and datum['mongoId'] != None:
             values['mongoId'] = datum['mongoId']
+
         return values
+
+
+    def getSelectedStreamValues(self, selected_stream):
+        """
+        If there is a selected stream, get it from the layout and return its
+        simplified values
+        """
+        layout = self.getLayout()
+        for group in layout:
+            for data in group['data']:
+                if data['id'] == selected_stream:
+                    return self.simplifyDatum(data)
+        return None
 
 
     def getManifest(self, values):
@@ -75,8 +92,20 @@ class OneSoccer:
         elif not 'token' in auth:
             raise OneSoccerAuthError('ERROR: token not in authorization data')
 
+        if 'selectedStream' in values and values['selectedStream'] != values['id']:
+            values = self.getSelectedStreamValues(values['selectedStream'])
+
         item_id = values['mongoId'] if 'mongoId' in values else values['id']
-        url = self.LIVE_STREAM_FMT if values['live'].lower() == 'true' else self.STREAM_FMT
+
+        # this can be boolean (selected stream) or a string (everything else)
+        if values['live'] == True:
+            url = self.LIVE_STREAM_FMT
+        elif values['live'] == False:
+            self.STREAM_FMT
+        elif values['live'].lower() == 'true':
+            url = self.LIVE_STREAM_FMT
+        else:
+            url = self.STREAM_FMT
         url = url.format(item_id, auth['uuid'])
         headers = { 'x-sessionId': auth['token'] }
 
