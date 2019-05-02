@@ -20,5 +20,9 @@
     <forum>http://forum.kodi.tv/showthread.php?tid=235268</forum>
     <website>https://github.com/micahg/plugin.video.onesoccer</website>
     <source>https://github.com/micahg/plugin.video.onesoccer</source>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.jpg</fanart>
+    </assets>
   </extension>
 </addon>
