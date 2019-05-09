@@ -13,6 +13,7 @@ class OneSoccer:
         """
         Initialize data
         """
+        self.LOGIN_URL = 'https://core.onesoccer.ca/api/v1/auth/login'
         self.LAYOUT_URL = 'https://onesoccer.ca/data/layout-2.json'
         # first param id, second param token
         self.LIVE_STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/{}/{}'
@@ -46,6 +47,8 @@ class OneSoccer:
         js = json.loads(r.content)
         return js
 
+    def getDTObject(self, dt):
+        return datetime.datetime.fromtimestamp(dt)
 
     def simplifyDatum(self, datum):
         """
@@ -67,16 +70,16 @@ class OneSoccer:
 
         # sometimes date is actually just boolean false
         if 'date' in datum and datum['date']:
-            gmt = datetime.datetime.utcfromtimestamp(0)
-            local = datetime.datetime.fromtimestamp(0)
-            delta = local - gmt
+            gmt = datetime.datetime.utcnow()#fromtimestamp(0)
+            local = datetime.datetime.now()#fromtimestamp(0)
+            delta = gmt - local
 
             t = time.strptime(datum['date'], '%Y-%m-%dT%H:%M:%S.000Z')
             ts = time.mktime(t)
             dt = datetime.datetime.fromtimestamp(ts)
             local_dt = dt - delta
             values['date'] = local_dt.strftime('%Y/%m/%d %H:%M')
-
+            values['dt'] = local_dt.isoformat()
 
         return values
 

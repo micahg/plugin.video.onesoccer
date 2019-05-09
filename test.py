@@ -42,7 +42,9 @@ elif options.category:
         print('Unable to find category "{}"'.format(options.category))
         sys.exit(1)
     for d in category['data']:
-        print(d)
+        #print(d)
+        thing = onesoccer.simplifyDatum(d)
+        print(thing)
 
     sys.exit(0)
 elif options.stream:

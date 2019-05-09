@@ -38,6 +38,25 @@ def createMainMenu(onesoccer):
     return None
 
 
+def getLabels(values):
+        title = values['title'].title()
+        labels = {'title': title, 'mediatype': 'video'}
+
+        if 'date' in values:
+            labels['title'] = '{} ({})'.format(title, values['date'])
+
+        if 'dt' in values:
+            labels['premiered'] = values['dt']
+
+        if 'plot' in values:
+            plot = '{}\n{}'.format(values['plot'], title)
+            if 'date' in values:
+                plot = '{}\n{}'.format(plot, values['date'])
+            labels['plot'] = plot
+            labels['plotoutline'] = plot
+
+        return labels
+
 def createSubMenu(onesoccer, menu):
 
     gmt = datetime.datetime.utcfromtimestamp(0)
@@ -46,18 +65,9 @@ def createSubMenu(onesoccer, menu):
 
     for m in menu:
         values = onesoccer.simplifyDatum(m)
-        title = values['title']
 
-        if 'date' in values:
-            title = '{} ({})'.format(title, values['date'])
-
-        labels = {'title': title, 'mediatype': 'video'}
-
-        if 'plot' in values:
-            labels['plot'] = values['plot']
-            labels['plotoutline'] = values['plot']
-
-
+        labels = getLabels(values)
+        title = labels['title']
 
         item = xbmcgui.ListItem(title)
         item.setInfo('Video', labels)
@@ -89,8 +99,8 @@ def playVideo(onesoccer, data, reauth=False):
             return
         return playVideo(onesoccer, data, True)
 
-    labels = {'title': data['title'], 'mediatype': 'video'}
-    item = xbmcgui.ListItem(data['title'], path=url)
+    labels = getLabels(data)
+    item = xbmcgui.ListItem(labels['title'], path=url)
     item.setInfo(type="Video", infoLabels=labels)
     xbmcplugin.setResolvedUrl(addon_handle, True, item)
 
