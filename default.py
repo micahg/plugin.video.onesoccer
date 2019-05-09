@@ -1,4 +1,5 @@
 import xbmc, xbmcplugin, xbmcgui, xbmcaddon, urllib, urlparse, json
+#from datetime import datetime
 from resources.lib.onesoccer import *
 from resources.lib.utils import log
 
@@ -27,7 +28,7 @@ def createMainMenu(onesoccer):
 
     layout = onesoccer.getLayout()
     for l in layout:
-        labels = {'title': l['title']['en'], 'mediatype': 'video'}
+        labels = {'title': l['name'], 'mediatype': 'video'}
         item = xbmcgui.ListItem(labels['title'])
         item.setInfo('Video', labels)
         encoded_data = urllib.urlencode({'menu': json.dumps(l['data'])})
@@ -38,14 +39,27 @@ def createMainMenu(onesoccer):
 
 
 def createSubMenu(onesoccer, menu):
+
+    gmt = datetime.datetime.utcfromtimestamp(0)
+    local = datetime.datetime.fromtimestamp(0)
+    delta = local - gmt
+
     for m in menu:
         values = onesoccer.simplifyDatum(m)
-        labels = {'title': values['title'], 'mediatype': 'video'}
+        title = values['title']
+
+        if 'date' in values:
+            title = '{} ({})'.format(title, values['date'])
+
+        labels = {'title': title, 'mediatype': 'video'}
+
         if 'plot' in values:
             labels['plot'] = values['plot']
             labels['plotoutline'] = values['plot']
 
-        item = xbmcgui.ListItem(labels['title'])
+
+
+        item = xbmcgui.ListItem(title)
         item.setInfo('Video', labels)
         item.setProperty('IsPlayable', 'true')
         if 'image' in values:
@@ -61,7 +75,7 @@ def playVideo(onesoccer, data, reauth=False):
     try:
         url = onesoccer.getManifest(data)
     except OneSoccerAuthError as e:
-        xbmc.log(e.message, xbmc.LOGWARNING)
+        log(e.message, True)
 
         # if we already reauthorized AND we couldn't get the stream show an
         # "I give up" type of error

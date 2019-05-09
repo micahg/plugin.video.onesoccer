@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, time, datetime
 
 from .utils import log, saveAuthorization, loadAuthorization
 
@@ -13,8 +13,7 @@ class OneSoccer:
         """
         Initialize data
         """
-        self.LOGIN_URL = 'https://core.onesoccer.ca/api/v1/auth/login'
-        self.LAYOUT_URL = 'https://static.onesoccer.ca/onesoccer-ott/data/layout.json'
+        self.LAYOUT_URL = 'https://onesoccer.ca/data/layout-2.json'
         # first param id, second param token
         self.LIVE_STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/{}/{}'
         self.STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/vod/{}/{}'
@@ -55,9 +54,8 @@ class OneSoccer:
         values = {
             'title': datum['title'],
             'plot': datum['header'],
-            'date': datum['date'],
             'id': datum['id'],
-            'image': datum['images']['landscape'],
+            'image': datum['image'],
             'live': datum['live']
         }
 
@@ -66,6 +64,19 @@ class OneSoccer:
 
         if 'mongoId' in datum and datum['mongoId'] != None:
             values['mongoId'] = datum['mongoId']
+
+        # sometimes date is actually just boolean false
+        if 'date' in datum and datum['date']:
+            gmt = datetime.datetime.utcfromtimestamp(0)
+            local = datetime.datetime.fromtimestamp(0)
+            delta = local - gmt
+
+            t = time.strptime(datum['date'], '%Y-%m-%dT%H:%M:%S.000Z')
+            ts = time.mktime(t)
+            dt = datetime.datetime.fromtimestamp(ts)
+            local_dt = dt - delta
+            values['date'] = local_dt.strftime('%Y/%m/%d %H:%M')
+
 
         return values
 
