@@ -39,19 +39,20 @@ def createMainMenu(onesoccer):
 
 
 def getLabels(values):
-        title = values['title'].title()
+        title = u'{}'.format(values['title'].title())
         labels = {'title': title, 'mediatype': 'video'}
 
         if 'date' in values:
-            labels['title'] = '{} ({})'.format(title, values['date'])
+            labels['title'] = u'{} ({})'.format(title, values['date'])
+            #labels['title'] = '{}'.format(title.encode('utf-8'))
 
         if 'dt' in values:
             labels['premiered'] = values['dt']
 
         if 'plot' in values:
-            plot = '{}\n{}'.format(values['plot'], title)
+            plot = u'{}\n{}'.format(values['plot'], title)
             if 'date' in values:
-                plot = '{}\n{}'.format(plot, values['date'])
+                plot = u'{}\n{}'.format(plot, values['date'])
             labels['plot'] = plot
             labels['plotoutline'] = plot
 
@@ -75,7 +76,7 @@ def createSubMenu(onesoccer, menu):
         if 'image' in values:
             item.setArt({ 'thumb': values['image'], 'poster': values['image'] })
 
-        path = sys.argv[0] + "?" + urllib.urlencode(values)
+        path = sys.argv[0] + "?" + urllib.urlencode(values, 'utf-8')
         xbmcplugin.addDirectoryItem(addon_handle, path, item, False)
     xbmcplugin.endOfDirectory(addon_handle)
     return None
