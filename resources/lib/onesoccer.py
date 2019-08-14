@@ -18,6 +18,7 @@ class OneSoccer:
         # first param id, second param token
         self.LIVE_STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/{}/{}'
         self.STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/vod/{}/{}'
+        self.MENU_FMT = 'https://app.onesoccer.ca/api/v1/videos?tags={},{}&live=false&limit=20&skip=0'
 
 
     def login(self, email, password):
@@ -55,11 +56,12 @@ class OneSoccer:
         Simplify a stream description down to something more kodi friendly
         """
         values = {
-            'title': datum['title'],
-            'plot': datum['header'],
+            'title': datum['title'] if 'title' in datum else datum['name'],
+            'plot': datum['header'] if 'header' in datum else datum['name'],
             'id': datum['id'],
             'image': datum['image'],
-            'live': datum['live']
+            'live': datum['live'] if 'live' in datum else False,
+            'video': (datum['toPlayer'] == True) if 'toPlayer' in datum else False
         }
 
         if 'selectedStream' in datum and datum['selectedStream'] != None:

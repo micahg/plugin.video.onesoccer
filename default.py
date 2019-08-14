@@ -39,12 +39,11 @@ def createMainMenu(onesoccer):
 
 
 def getLabels(values):
-        title = u'{}'.format(values['title'].title())
+        title = values['title']
         labels = {'title': title, 'mediatype': 'video'}
 
         if 'date' in values:
             labels['title'] = u'{} ({})'.format(title, values['date'])
-            #labels['title'] = '{}'.format(title.encode('utf-8'))
 
         if 'dt' in values:
             labels['premiered'] = values['dt']
@@ -115,6 +114,7 @@ else:
     # get the dict, and then make the items not lists
     data = urlparse.parse_qs(sys.argv[2][1:])
     data = dict((name, value[0]) for name, value in data.items())
+    log(data, True)
     if 'menu' in data:
         json_data = json.loads(data['menu'])
         createSubMenu(onesoccer, json_data)
