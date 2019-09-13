@@ -29,14 +29,13 @@ if options.user and options.password:
     sys.exit(0)
 elif options.layout:
     layout = onesoccer.getLayout()
-    for c in layout:
-        print('"{}": "{}"'.format(c['id'], c['name']))
+    for c in layout.keys():
+        print('"{}": "{}"'.format(c, layout[c]['label']['en']))
 elif options.category:
     layout = onesoccer.getLayout()
-
-    for c in layout:
-        if c['id'] == options.category:
-            category = c
+    for c in layout.keys():
+        if c == options.category:
+            category = layout[c]
             break
     if category == None:
         print('Unable to find category "{}"'.format(options.category))
@@ -50,8 +49,8 @@ elif options.category:
 elif options.stream:
     datum = None
     layout = onesoccer.getLayout()
-    for group in layout:
-        for data in group['data']:
+    for k in layout.keys():
+        for data in layout[k]['data']:
             if data['id'] == options.stream:
                 datum = data
 

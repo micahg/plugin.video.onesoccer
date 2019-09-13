@@ -14,7 +14,8 @@ class OneSoccer:
         Initialize data
         """
         self.LOGIN_URL = 'https://core.onesoccer.ca/api/v1/auth/login'
-        self.LAYOUT_URL = 'https://onesoccer.ca/data/layout-2.json'
+        #self.LAYOUT_URL = 'https://onesoccer.ca/data/layout-2.json'
+        self.LAYOUT_URL = 'https://onesoccer.ca/data/new-layout.json'
         # first param id, second param token
         self.LIVE_STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/{}/{}'
         self.STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/vod/{}/{}'
@@ -55,14 +56,18 @@ class OneSoccer:
         """
         Simplify a stream description down to something more kodi friendly
         """
-        values = {
-            'title': datum['title'] if 'title' in datum else datum['name'],
-            'plot': datum['header'] if 'header' in datum else datum['name'],
-            'id': datum['id'],
-            'image': datum['image'],
-            'live': datum['live'] if 'live' in datum else False,
-            'video': (datum['toPlayer'] == True) if 'toPlayer' in datum else False
-        }
+        try:
+            values = {
+                'title': datum['title'] if 'title' in datum else datum['name'],
+                'plot': datum['header'] if 'header' in datum else datum['name'],
+                'id': datum['id'],
+                'image': datum['images']['landscape'],
+                'live': datum['live'] if 'live' in datum else False,
+                'video': (datum['toPlayer'] == True) if 'toPlayer' in datum else False
+            }
+        except:
+            log('Error: Unable to simplify "{}"'.format(datum), True)
+            return None
 
         if 'selectedStream' in datum and datum['selectedStream'] != None:
             values['selectedStream'] = datum['selectedStream']
@@ -92,8 +97,8 @@ class OneSoccer:
         simplified values
         """
         layout = self.getLayout()
-        for group in layout:
-            for data in group['data']:
+        for k in layout.keys():
+            for data in layout[k]['data']:
                 if data['id'] == selected_stream:
                     return self.simplifyDatum(data)
         return None

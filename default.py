@@ -27,11 +27,11 @@ def authorize(onesoccer):
 def createMainMenu(onesoccer):
 
     layout = onesoccer.getLayout()
-    for l in layout:
-        labels = {'title': l['name'], 'mediatype': 'video'}
+    for k in layout.keys():
+        labels = {'title': layout[k]['label']['en'], 'mediatype': 'video'}
         item = xbmcgui.ListItem(labels['title'])
         item.setInfo('Video', labels)
-        encoded_data = urllib.urlencode({'menu': json.dumps(l['data'])})
+        encoded_data = urllib.urlencode({'menu': json.dumps(layout[k]['data'])})
         path = sys.argv[0] + "?" + encoded_data
         xbmcplugin.addDirectoryItem(addon_handle, path, item, True)
     xbmcplugin.endOfDirectory(addon_handle)
