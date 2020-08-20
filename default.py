@@ -39,7 +39,7 @@ def createMainMenu(onesoccer):
 
 
 def getLabels(values):
-        title = values['title']
+        title = values['title'] if 'title' in values else 'Untitled'
         labels = {'title': title, 'mediatype': 'video'}
 
         if 'date' in values:
@@ -81,7 +81,6 @@ def createSubMenu(onesoccer, menu):
     return None
 
 def playVideo(onesoccer, data, reauth=False):
-
     try:
         url = onesoccer.getManifest(data)
     except OneSoccerAuthError as e:

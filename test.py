@@ -1,5 +1,4 @@
-#!/usr/bin/python
-
+#!/usr/bin/env python3
 import sys, urllib.parse, json
 from optparse import OptionParser
 
