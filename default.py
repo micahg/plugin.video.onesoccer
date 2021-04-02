@@ -1,5 +1,11 @@
-import xbmc, xbmcplugin, xbmcgui, xbmcaddon, urllib, urlparse, json
-#from datetime import datetime
+"""Kodi addon entrypoint."""
+import json
+# from urllib.parse import urlparse
+from urllib.parse import urlencode, parse_qs
+import xbmc
+import xbmcplugin
+import xbmcgui
+import xbmcaddon
 from resources.lib.onesoccer import *
 from resources.lib.utils import log
 
@@ -31,7 +37,7 @@ def createMainMenu(onesoccer):
         labels = {'title': layout[k]['label']['en'], 'mediatype': 'video'}
         item = xbmcgui.ListItem(labels['title'])
         item.setInfo('Video', labels)
-        encoded_data = urllib.urlencode({'menu': json.dumps(layout[k]['data'])})
+        encoded_data = urlencode({'menu': json.dumps(layout[k]['data'])})
         path = sys.argv[0] + "?" + encoded_data
         xbmcplugin.addDirectoryItem(addon_handle, path, item, True)
     xbmcplugin.endOfDirectory(addon_handle)
@@ -75,7 +81,7 @@ def createSubMenu(onesoccer, menu):
         if 'image' in values:
             item.setArt({ 'thumb': values['image'], 'poster': values['image'] })
 
-        path = sys.argv[0] + "?" + urllib.urlencode(values, 'utf-8')
+        path = sys.argv[0] + "?" + urlencode(values, 'utf-8')
         xbmcplugin.addDirectoryItem(addon_handle, path, item, False)
     xbmcplugin.endOfDirectory(addon_handle)
     return None
@@ -111,7 +117,7 @@ if len(sys.argv[2]) == 0:
     createMainMenu(onesoccer)
 else:
     # get the dict, and then make the items not lists
-    data = urlparse.parse_qs(sys.argv[2][1:])
+    data = parse_qs(sys.argv[2][1:])
     data = dict((name, value[0]) for name, value in data.items())
     log(data, True)
     if 'menu' in data:

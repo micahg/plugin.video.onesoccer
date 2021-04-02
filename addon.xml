@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.onesoccer" name="One Soccer" version="1.0.4" provider-name="Micah Galizia">
+<addon id="plugin.video.onesoccer"
+       name="One Soccer"
+       version="1.0.5"
+       provider-name="Micah Galizia">
   <requires>
-    <import addon="xbmc.python" version="2.20.0"/>
-    <import addon="script.module.requests" version="2.12.4"/>
+    <import addon="xbmc.python" version="3.0.0"/>
+    <import addon="script.module.requests" version="2.22.0+matrix.1"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
 	<provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary>One Soccer Kodi Plugin</summary>
+    <summary lang="en">One Soccer Kodi Plugin</summary>
+    <description lang="en">Canadian Premier League Soccer Live Streaming</description>
     <news>
 - Bug fixes
     </news>
-    <description>Canadian Premier League Soccer Live Streaming</description>
     <platform>all</platform>
     <language>en</language>
-    <disclaimer>For bugs, requests or general questions visit the One Soccer thread on the Kodi forum.</disclaimer>
+    <disclaimer lang="en">For bugs, requests or general questions visit the One Soccer thread on the Kodi forum.</disclaimer>
     <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
     <forum>https://forum.kodi.tv/showthread.php?tid=343500</forum>
-    <website>https://github.com/micahg/plugin.video.onesoccer</website>
+    <website>https://onesoccer.ca/</website>
     <source>https://github.com/micahg/plugin.video.onesoccer</source>
     <assets>
       <icon>resources/icon.png</icon>
