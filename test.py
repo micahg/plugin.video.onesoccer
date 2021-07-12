@@ -4,6 +4,9 @@ from optparse import OptionParser
 
 from resources.lib.onesoccer import *
 
+import http.client as http_client
+http_client.HTTPConnection.debuglevel = 1
+
 # parse the options
 parser = OptionParser()
 parser.add_option('-u', '--user', type='string', dest='user',
@@ -55,9 +58,8 @@ elif options.stream:
 
     encoded = urllib.parse.urlencode(onesoccer.simplifyDatum(datum))
     decoded = urllib.parse.parse_qs(encoded)
-    decoded = dict((name, value[0]) for name, value in decoded.items())
+    decoded = {name:value[0] for (name, value) in decoded.items()}
     stream = onesoccer.getManifest(decoded)
-    print('Stream is "{}"'.format(stream))
     sys.exit(0)
 else:
     parser.print_help()
