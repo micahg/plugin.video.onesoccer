@@ -60,7 +60,7 @@ class OneSoccer:
             values = {
                 'title': datum['title'] if 'title' in datum else datum['name'],
                 'plot': datum['header'] if 'header' in datum else datum['name'],
-                'id': datum['id'],
+                'id': datum['selectedStream'] if 'selectedStream' in datum else datum['id'],
                 'image': datum['images']['landscape'],
                 'live': datum['live'] if 'live' in datum else False,
                 'video': (datum['toPlayer'] == True) if 'toPlayer' in datum else False
@@ -99,7 +99,7 @@ class OneSoccer:
         layout = self.getLayout()
         for k in layout.keys():
             for data in layout[k]['data']:
-                if data['id'] == selected_stream:
+                if data['id'] == selected_stream or data['selectedStream'] == selected_stream:
                     return self.simplifyDatum(data)
         return None
 
