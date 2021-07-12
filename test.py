@@ -31,13 +31,14 @@ if options.user and options.password:
     sys.exit(0)
 elif options.layout:
     layout = onesoccer.getLayout()
-    for c in layout.keys():
-        print('"{}": "{}"'.format(c, layout[c]['label']['en']))
+    for item in layout:
+    # for c in layout.keys():
+        print('"{}": "{}"'.format(item['id'], item['label']['en']))
 elif options.category:
     layout = onesoccer.getLayout()
-    for c in layout.keys():
-        if c == options.category:
-            category = layout[c]
+    for item in layout:
+        if item['id'] == options.category:
+            category = item
             break
     if category == None:
         print('Unable to find category "{}"'.format(options.category))
@@ -51,15 +52,19 @@ elif options.category:
 elif options.stream:
     datum = None
     layout = onesoccer.getLayout()
-    for k in layout.keys():
-        for data in layout[k]['data']:
+    for item in layout:
+        for data in item['data']:
             if data['id'] == options.stream:
                 datum = data
 
     encoded = urllib.parse.urlencode(onesoccer.simplifyDatum(datum))
     decoded = urllib.parse.parse_qs(encoded)
-    decoded = {name:value[0] for (name, value) in decoded.items()}
-    stream = onesoccer.getManifest(decoded)
+    # decoded = dict((name, value[0]) for name, value in decoded.items())
+    stuff = {name:value[0] for (name, value) in decoded.items()}
+    print('MICAH DECODED "{}"'.format(stuff))
+    print('MICAH DECODED TYPE {}'.format(type(stuff)))
+    stream = onesoccer.getManifest(stuff)
+    print('Stream is "{}"'.format(stream))
     sys.exit(0)
 else:
     parser.print_help()
