@@ -15,7 +15,8 @@ class OneSoccer:
         """
         self.LOGIN_URL = 'https://core.onesoccer.ca/api/v1/auth/login'
         #self.LAYOUT_URL = 'https://onesoccer.ca/data/layout-2.json'
-        self.LAYOUT_URL = 'https://onesoccer.ca/data/new-layout.json'
+        #self.LAYOUT_URL = 'https://onesoccer.ca/data/new-layout.json'
+        self.LAYOUT_URL = 'https://pada.onesoccer.ca/data/layout_v3'
         # first param id, second param token
         self.LIVE_STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/{}/{}'
         self.STREAM_FMT = 'https://core.onesoccer.ca/api/v1/media/hls/vod/{}/{}'
