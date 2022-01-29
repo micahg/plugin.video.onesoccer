@@ -30,12 +30,11 @@ if options.user and options.password:
         sys.exit(1)
     sys.exit(0)
 elif options.layout:
-    layout = onesoccer.getLayout()
+    layout = onesoccer.get_layout()
     for item in layout:
-    # for c in layout.keys():
         print('"{}": "{}"'.format(item['id'], item['label']['en']))
 elif options.category:
-    layout = onesoccer.getLayout()
+    layout = onesoccer.get_layout()
     for item in layout:
         if item['id'] == options.category:
             category = item
@@ -44,14 +43,13 @@ elif options.category:
         print('Unable to find category "{}"'.format(options.category))
         sys.exit(1)
     for d in category['data']:
-        #print(d)
         thing = onesoccer.simplifyDatum(d)
         print(thing)
 
     sys.exit(0)
 elif options.stream:
     datum = None
-    layout = onesoccer.getLayout()
+    layout = onesoccer.get_layout()
     for item in layout:
         for data in item['data']:
             if data['id'] == options.stream:

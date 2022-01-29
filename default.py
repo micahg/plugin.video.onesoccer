@@ -30,18 +30,20 @@ def authorize(onesoccer):
 
     return True
 
-def createMainMenu(onesoccer):
 
-    layout = onesoccer.getLayout()
-    for k in layout.keys():
-        labels = {'title': layout[k]['label']['en'], 'mediatype': 'video'}
+def get_main_menu(onesoccer):
+    """Create the main menu."""
+    layout = onesoccer.get_layout()
+    for js_item in layout:
+        labels = {'title': js_item['label']['en'], 'mediatype': 'video'}
+    # for k in layout.keys():
+    #     labels = {'title': layout[k]['label']['en'], 'mediatype': 'video'}
         item = xbmcgui.ListItem(labels['title'])
         item.setInfo('Video', labels)
-        encoded_data = urlencode({'menu': json.dumps(layout[k]['data'])})
+        encoded_data = urlencode({'menu': json.dumps(js_item['data'])})
         path = sys.argv[0] + "?" + encoded_data
         xbmcplugin.addDirectoryItem(addon_handle, path, item, True)
     xbmcplugin.endOfDirectory(addon_handle)
-    return None
 
 
 def getLabels(values):
@@ -114,7 +116,7 @@ def playVideo(onesoccer, data, reauth=False):
 onesoccer = OneSoccer()
 
 if len(sys.argv[2]) == 0:
-    createMainMenu(onesoccer)
+    get_main_menu(onesoccer)
 else:
     # get the dict, and then make the items not lists
     data = parse_qs(sys.argv[2][1:])

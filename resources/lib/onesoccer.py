@@ -1,11 +1,20 @@
-import requests, json, time, datetime
+"""OneSoccer module."""
+import time
+import datetime
+import json
+import requests
 
 from .utils import log, saveAuthorization, loadAuthorization
 
+
 class OneSoccerAuthError(Exception):
+    """OneSoccer authorization exception."""
+
     def __init__(self, message):
+        """Initialize the exception with a message."""
+        super().__init__()
         self.message = message
-        return
+
 
 class OneSoccer:
 
@@ -41,14 +50,11 @@ class OneSoccer:
 
         return True
 
-
-    def getLayout(self):
-        """
-        Get the layout configuration
-        """
-        r = requests.get(self.LAYOUT_URL)
-        js = json.loads(r.content)
-        return js
+    def get_layout(self):
+        """Get the layout configuration"""
+        resp = requests.get(self.LAYOUT_URL)
+        js_obj = json.loads(resp.content)
+        return js_obj
 
     def getDTObject(self, dt):
         return datetime.datetime.fromtimestamp(dt)
